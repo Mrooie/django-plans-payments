@@ -46,6 +46,15 @@ class Payment(BasePayment):
                             )
         ret_val = super().save(**kwargs)
         return ret_val
+    
+    def get_user_email(self):
+        return self.billing_email
+
+    def get_user_first_name(self):
+        return self.billing_first_name
+
+    def get_user_last_name(self):
+        return self.billing_last_name
 
     def get_failure_url(self):
         return reverse('order_payment_failure', kwargs={'pk': self.order.pk})

@@ -19,7 +19,7 @@ def payment_details(request, payment_id):
 
 
 def create_payment(request, data):
-    order = get_object_or_404(Order, data[order].pk)
+    order = get_object_or_404(Order, pk=data["order"].pk)
     Payment = get_payment_model()
     payment = Payment.objects.create(
         variant=data['variant'],

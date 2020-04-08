@@ -18,24 +18,25 @@ def payment_details(request, payment_id):
                             {'form': form, 'payment': payment})
 
 
-def create_payment(request, payment_variant, order_id):
-    order = get_object_or_404(Order, pk=order_id)
+def create_payment(request, data):
+    order = get_object_or_404(Order, data[order].pk)
     Payment = get_payment_model()
     payment = Payment.objects.create(
-        variant=payment_variant,
+        variant=data['variant'],
         order=order,
-        description='Subscription plan %s purchase' % order.name,
-        total=Decimal(order.total()),
-        tax=Decimal(order.tax_total()),
+        description=data['description'],
+        total=Decimal(data['total']),
+        tax=Decimal(23),
         currency=order.currency,
         delivery=Decimal(0),
-        billing_first_name=settings.PLANS_INVOICE_ISSUER['issuer_name'],
-        # billing_last_name=settings.PLANS_INVOICE_ISSUER['issuer_'],
-        billing_address_1=settings.PLANS_INVOICE_ISSUER['issuer_street'],
-        # billing_address_2=settings.PLANS_INVOICE_ISSUER['issuer_'],
-        billing_city=settings.PLANS_INVOICE_ISSUER['issuer_city'],
-        billing_postcode=settings.PLANS_INVOICE_ISSUER['issuer_zipcode'],
-        billing_country_code=settings.PLANS_INVOICE_ISSUER['issuer_country'],
-        # billing_country_area=settings.PLANS_INVOICE_ISSUER['issuer_name'],
-        customer_ip_address='127.0.0.1')
+        billing_first_name=data['billing_first_name'],
+        billing_last_name=data['billing_last_name'],
+        billing_address_1=data['billing_address_1'],
+        billing_address_2=data['billing_address_2'],
+        billing_city=data['billing_city'],
+        billing_postcode=data['billing_postcode'],
+        billing_country_code=data['billing_country_code'],
+        billing_country_area=data['billing_country_area'],
+        customer_ip_address=data["customer_ip_address"]
+    )
     return redirect(reverse('payment_details', kwargs={'payment_id': payment.id}))

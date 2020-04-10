@@ -5,7 +5,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views.generic import TemplateView
 from payments import get_payment_model, RedirectNeeded
-from plans.models import Order
+from plans.models import Order, BillingInfo
 
 
 def payment_details(request, payment_id):
@@ -18,25 +18,26 @@ def payment_details(request, payment_id):
                             {'form': form, 'payment': payment})
 
 
-def create_payment(request, data):
-    order = get_object_or_404(Order, pk=data["order"].pk)
+def create_payment(request, payment_variant, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    billing = BillingInfo.objects.get(user=request.user)
     Payment = get_payment_model()
     payment = Payment.objects.create(
-        variant=data['variant'],
+        variant=payment_variant,
         order=order,
-        description=data['description'],
-        total=Decimal(data['total']),
-        tax=Decimal(23),
+        description='Zamówienie: %s' % order.name,
+        total=Decimal(order.total()),
+        tax=Decimal(order.tax_total()),
         currency=order.currency,
         delivery=Decimal(0),
-        billing_first_name=data['billing_first_name'],
-        billing_last_name=data['billing_last_name'],
-        billing_address_1=data['billing_address_1'],
-        billing_address_2=data['billing_address_2'],
-        billing_city=data['billing_city'],
-        billing_postcode=data['billing_postcode'],
-        billing_country_code=data['billing_country_code'],
-        billing_country_area=data['billing_country_area'],
-        customer_ip_address=data["customer_ip_address"]
-    )
+        billing_first_name=order.user.first_name,
+        billing_last_name=order.user.last_name,
+        billing_address_1=billing.street,
+        billing_address_2="-",
+        billing_city=billing.city,
+        billing_postcode=billing.zipcode,
+        billing_country_code=billing.country,
+        billing_country_area="-",
+        customer_ip_address=request.META.get("REMOTE_ADDR"))
+    return redirect(reverse('payment_details', kwargs={'payment_id': payment.id}))
     return redirect(reverse('payment_details', kwargs={'payment_id': payment.id}))

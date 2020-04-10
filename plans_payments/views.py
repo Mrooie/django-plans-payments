@@ -40,4 +40,3 @@ def create_payment(request, payment_variant, order_id):
         billing_country_area="-",
         customer_ip_address=request.META.get("REMOTE_ADDR"))
     return redirect(reverse('payment_details', kwargs={'payment_id': payment.id}))
-    return redirect(reverse('payment_details', kwargs={'payment_id': payment.id}))

@@ -76,5 +76,5 @@ class Payment(BasePayment):
 def change_payment_status(sender, *args, **kwargs):
     payment = kwargs['instance']
     order = payment.order
-    if payment.status == 'COMPLETED':
+    if payment.status == 'confirmed':
         order.complete_order()

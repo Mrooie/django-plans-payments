@@ -2,13 +2,13 @@
 
 {% block "buttons" %}
 {% for variant in variants %}
-   <a class="btn btn-success" role="button" href="{% url "create_payment" payment_variant=variant order_id=object.id %}">
+   <a class="btn btn-light" role="button" href="{% url "create_payment" payment_variant=variant order_id=object.id %}">
       {% if variant == 'paypal' %}
         PayPal
       {% elif variant == 'paypal-sandbox' %}
       PayPal (sandbox)
       {% elif variant == 'payu' %}
-        <img src="{% static 'images/PAYU.png' %}" height="30px" alt="PayU logo"></img>
+        <img src="{% static 'images/PAYU.png' %}" height="100px" alt="PayU logo"></img>
       {% else %}
         {{ variant }}
       {% endif %}
